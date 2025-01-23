@@ -14,4 +14,23 @@ class Backgammon:
                     sequences.append([(start, end)])
         return sequences
 
-   
+    def is_valid_move(self, start, end):
+        if self.board[start][1] != self.player or self.board[start][0] == 0:
+            return False
+        if self.board[end][1] not in [self.player, None] and self.board[end][0] > 1:
+            return False
+        return True
+
+    def make_move(self, start, end):
+        self.move_history.append((start, end, self.board[start][:], self.board[end][:]))
+        self.board[start][0] -= 1
+        if self.board[start][0] == 0:
+            self.board[start][1] = None
+
+        if self.board[end][1] not in [self.player, None]:
+            opponent = "white" if self.player == "black" else "black"
+            self.board[end][0] = 1
+            self.board[end][1] = self.player
+        else:
+            self.board[end][0] += 1
+            self.board[end][1] = self.player
