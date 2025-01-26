@@ -34,6 +34,7 @@ class Backgammon:
         else:
             self.board[end][0] += 1
             self.board[end][1] = self.player
+
     def undo_move(self, start, end):
         last_move = self.move_history.pop()
         self.board[start] = last_move[2]
@@ -53,7 +54,8 @@ class Backgammon:
             elif player is not None:
                 score -= count * (24 - i if self.player == "white" else i)
         return score
- def alpha_beta_pruning(self, depth, alpha, beta, maximizing_player):
+
+    def alpha_beta_pruning(self, depth, alpha, beta, maximizing_player):
         if depth == 0 or self.is_game_over():
             return self.evaluate_board()
 
@@ -81,3 +83,21 @@ class Backgammon:
                     if beta <= alpha:
                         break
             return min_eval
+
+    def play_turn(self):
+        best_score = float('-inf') if self.player == "white" else float('inf')
+        best_sequence = None
+
+        for sequence in self.get_possible_sequences():
+            for move in sequence:
+                self.make_move(move[0], move[1])
+                score = self.alpha_beta_pruning(3, float('-inf'), float('inf'), self.player == "black")
+                self.undo_move(move[0], move[1])
+
+                if (self.player == "white" and score > best_score) or (self.player == "black" and score < best_score):
+                    best_score = score
+                    best_sequence = sequence
+
+        if best_sequence:
+            for move in best_sequence:
+                self.make_move(move[0], move[1])
