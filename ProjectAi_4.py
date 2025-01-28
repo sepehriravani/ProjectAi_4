@@ -101,3 +101,13 @@ class Backgammon:
         if best_sequence:
             for move in best_sequence:
                 self.make_move(move[0], move[1])
+self.alpha_beta_pruning(depth - 1, alpha, beta, False)
+                    self.undo_move(move[0], move[1])
+                    max_eval = max(max_eval, eval)
+                    alpha = max(alpha, eval)
+                    if beta <= alpha:
+                        break
+            return max_eval
+        else:
+            min_eval = float('inf')
+            for sequence in
