@@ -64,4 +64,40 @@ class Backgammon:
             for sequence in self.get_possible_sequences():
                 for move in sequence:
                     self.make_move(move[0], move[1])
-                    eval =
+                    eval = self.alpha_beta_pruning(depth - 1, alpha, beta, False)
+                    self.undo_move(move[0], move[1])
+                    max_eval = max(max_eval, eval)
+                    alpha = max(alpha, eval)
+                    if beta <= alpha:
+                        break
+            return max_eval
+        else:
+            min_eval = float('inf')
+            for sequence in self.get_possible_sequences():
+                for move in sequence:
+                    self.make_move(move[0], move[1])
+                    eval = self.alpha_beta_pruning(depth - 1, alpha, beta, True)
+                    self.undo_move(move[0], move[1])
+                    min_eval = min(min_eval, eval)
+                    beta = min(beta, eval)
+                    if beta <= alpha:
+                        break
+            return min_eval
+
+    def play_turn(self):
+        best_score = float('-inf') if self.player == "white" else float('inf')
+        best_sequence = None
+
+        for sequence in self.get_possible_sequences():
+            for move in sequence:
+                self.make_move(move[0], move[1])
+                score = self.alpha_beta_pruning(3, float('-inf'), float('inf'), self.player == "black")
+                self.undo_move(move[0], move[1])
+
+                if (self.player == "white" and score > best_score) or (self.player == "black" and score < best_score):
+                    best_score = score
+                    best_sequence = sequence
+
+        if best_sequence:
+            for move in best_sequence:
+                self.make_move(move[0], move[1])
